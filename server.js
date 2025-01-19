@@ -14,9 +14,7 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:3000" // Production frontend
-        ], // Allow requests from your frontend
+        origin: process.env.FRONTEND_SERVER_URL,// Production frontend // Allow requests from your frontend
         methods: ["GET", "POST"],
     },
 });
