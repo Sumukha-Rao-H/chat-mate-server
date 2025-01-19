@@ -44,6 +44,7 @@ const searchUsers = async (req, res) => {
 
 //store public key into db
 const storePublicKey = async (req, res) => {
+    console.log(req.body);
     const { uid, publicKey } = req.body;
 
     try {
