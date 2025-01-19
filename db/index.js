@@ -1,23 +1,24 @@
 const { Sequelize, DataTypes } = require("sequelize");
 require("dotenv").config();
 
+databaseUrl = process.env.DATABASE_URL;
+
 // Create a connection to the database
-const sequelize = new Sequelize(
-    process.env.DATABASE_NAME,
-    process.env.DATABASE_USER,
-    process.env.DATABASE_PASSWORD,
-    {
-      host: process.env.DATABASE_HOST,
-      port: process.env.DATABASE_PORT, // default is 5432
-      dialect: "postgres",
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false, // Necessary for Supabase SSL connection
-        },
-      },
-    }
-  );
+const sequelize = new Sequelize(databaseUrl, {
+  dialect: 'postgres',
+  dialectOptions: {
+      ssl: process.env.NODE_ENV === 'production' ? {
+          require: true, // SSL is required for production environments
+          rejectUnauthorized: false, // Handle SSL certificates
+      } : false, // Disable SSL for local development
+  },
+  pool: {
+      max: 10, // Max number of connections in the pool
+      min: 0, // Min number of connections in the pool
+      acquire: 30000, // Time (in ms) before a connection is considered as failed
+      idle: 10000, // Time (in ms) before a connection is released from the pool
+  },
+});
 
 // Dynamically load models
 const User = require("../models/userModel")(sequelize, DataTypes);
