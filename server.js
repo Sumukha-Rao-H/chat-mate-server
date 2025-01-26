@@ -14,7 +14,7 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://chat-mate-mu.vercel.app",// Production frontend // Allow requests from your frontend
+        origin: ["https://chat-mate-mu.vercel.app","http://localhost:3000"],// Production frontend // Allow requests from your frontend
         methods: ["GET", "POST"],
     },
 });
