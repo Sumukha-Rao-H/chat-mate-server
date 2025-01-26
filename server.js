@@ -20,6 +20,7 @@ const io = new Server(server, {
 });
 
 require("./sockets/chatSocket")(io);
+require("./sockets/signallingServer")(io);
 
 // User routes
 app.use("/api", userRoutes);

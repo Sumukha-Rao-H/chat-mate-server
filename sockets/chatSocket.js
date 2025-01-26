@@ -2,7 +2,10 @@ const { saveMessage } = require('../controllers/chatController');
 const Message = require('../models/messageModel');
 
 module.exports = (io) => {
-    io.on("connection", (socket) => {
+
+    const chatNamespace = io.of("/chat");
+
+    chatNamespace.on("connection", (socket) => {
         //console.log("A user connected:", socket.id);
 
         // Join a room for a conversation
