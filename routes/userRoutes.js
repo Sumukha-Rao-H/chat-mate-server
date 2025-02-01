@@ -12,6 +12,10 @@ const {
     fetchFriends, 
     rejectFriendRequest
 } = require("../controllers/socialController");
+const { 
+    getUserSettings,
+    updateUserSettings,
+} = require("../controllers/settingsController");
 
 const { getMessages } = require('../controllers/chatController');
 const verifyToken = require("../middleware/authMiddleware");
@@ -30,5 +34,8 @@ router.get("/get-requests", getFriendRequests);
 router.get("/get-friends", fetchFriends);
 
 router.get("/messages", getMessages);
+
+router.get("/get-settings", getUserSettings);
+router.put("/update-settings", updateUserSettings);
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const { sequelize, Message } = require('../db');
 const { Op } = require('sequelize');
 
-
 const getMessages = async (req, res) => {
     const { userId1, userId2, page , limit = 20 } = req.query;
   
