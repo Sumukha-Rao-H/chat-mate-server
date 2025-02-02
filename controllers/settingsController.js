@@ -1,5 +1,4 @@
 const { UserSettings } = require("../db"); // Adjust the path as needed
-console.log("UserSettings model:", UserSettings);
 
 const getUserSettings = async (req, res) => {
   const { uid } = req.query;
@@ -16,7 +15,6 @@ const getUserSettings = async (req, res) => {
     if (!settings) {
       settings = await UserSettings.create({
         userId: uid,
-        displayName: "",          // Default value; update as needed
         profileImageUrl: null,    // Default value (no image)
         notificationsEnabled: true,
         profileVisibility: "Public",
@@ -45,14 +43,12 @@ const updateUserSettings = async (req, res) => {
       // Create new settings if none exist
       settings = await UserSettings.create({
         userId: uid,
-        displayName: displayName || "",
         profileImageUrl: profileImageUrl || null,
         notificationsEnabled: notificationsEnabled !== undefined ? notificationsEnabled : true,
         profileVisibility: profileVisibility || "Public",
       });
     } else {
       // Update only provided fields
-      if (displayName !== undefined) settings.displayName = displayName;
       if (profileImageUrl !== undefined) settings.profileImageUrl = profileImageUrl;
       if (notificationsEnabled !== undefined) settings.notificationsEnabled = notificationsEnabled;
       if (profileVisibility !== undefined) settings.profileVisibility = profileVisibility;

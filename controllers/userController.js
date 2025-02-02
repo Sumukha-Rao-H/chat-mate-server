@@ -42,6 +42,48 @@ const searchUsers = async (req, res) => {
     }
 };
 
+const updateDisplayName = async (req, res) => {
+    const { uid, displayName } = req.body; // assuming displayName is passed in the body
+
+    if (!displayName) {
+        return res.status(400).json({ message: "displayName is required" });
+    }
+
+    try {
+        // Find the user by UID
+        const user = await User.findOne({ where: { uid } });
+
+        if (user) {
+            // Update the displayName field
+            const updatedUser = await user.update({ displayName });
+
+            res.status(200).json({ user: updatedUser });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getDisplayName = async (req, res) => {
+    const { uid } = req.query; // uid is expected in the URL params
+
+    try {
+        // Find the user by UID
+        const user = await User.findOne({ where: { uid }, attributes: ['displayName'] });
+
+        if (user) {
+            res.status(200).json({ displayName: user.displayName });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 //store public key into db
 const storePublicKey = async (req, res) => {
     console.log("STORE PUBLIC KEY HIT");
@@ -84,4 +126,4 @@ const getPublicKey = async (req, res) => {
     }
 };
 
-module.exports = { createOrUpdateUser, searchUsers, storePublicKey, getPublicKey };
+module.exports = { createOrUpdateUser, searchUsers, storePublicKey, getPublicKey, updateDisplayName, getDisplayName };

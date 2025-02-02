@@ -3,7 +3,9 @@ const {
     createOrUpdateUser, 
     searchUsers,
     storePublicKey,
-    getPublicKey, 
+    getPublicKey,
+    updateDisplayName,
+    getDisplayName
 } = require("../controllers/userController");
 const { 
     sendFriendRequest, 
@@ -26,6 +28,8 @@ router.post("/user", verifyToken, createOrUpdateUser);
 router.get("/user/search", searchUsers);
 router.post("/storePublicKey", storePublicKey);
 router.get("/getPublicKey/:uid", getPublicKey);
+router.put("/user/updateDisplayName", updateDisplayName);
+router.get("/user/getDisplayName", getDisplayName);
 
 router.post("/friend-request", sendFriendRequest);
 router.post("/accept-friend-request", acceptFriendRequest);
