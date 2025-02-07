@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const getMessages = async (req, res) => {
     const { userId1, userId2, page , limit = 20 } = req.query;
   
-    console.log('Fetching messages for:', userId1, userId2); // Log the incoming request parameters
+    //console.log('Fetching messages for:', userId1, userId2); // Log the incoming request parameters
   
     try {
       const messages = await Message.findAll({
@@ -19,7 +19,7 @@ const getMessages = async (req, res) => {
         limit: parseInt(limit, 10),
       });
   
-      console.log('Fetched messages:', messages); // Log the fetched messages
+      //console.log('Fetched messages:', messages); // Log the fetched messages
       // Check if we have fewer messages than the requested limit
       const hasMore = messages.length === parseInt(limit, 10);
   

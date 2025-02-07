@@ -5,6 +5,7 @@ const { sequelize, User, FriendRequest, Friendship, Message } = require("./db");
 const userRoutes = require("./routes/userRoutes");
 const http = require("http");
 const { Server } = require("socket.io");
+const port = process.env.PORT || 5000;
 
 const app = express();
 
