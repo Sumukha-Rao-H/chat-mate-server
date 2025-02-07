@@ -3,9 +3,7 @@ const Message = require('../models/messageModel');
 
 module.exports = (io) => {
 
-    const chatNamespace = io.of("/chat");
-
-    chatNamespace.on("connection", (socket) => {
+    io.on("connection", (socket) => {
         //console.log("A user connected:", socket.id);
 
         // Join a room for a conversation
