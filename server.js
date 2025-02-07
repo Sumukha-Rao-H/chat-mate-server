@@ -30,7 +30,7 @@ app.use("/api", userRoutes);
 sequelize.sync({ force: false }) // Use `force: false` to avoid dropping tables on each restart
     .then(() => {
         console.log("Database connected and models synced!");
-        server.listen(5000, () => console.log("Server running on http://localhost:5000"));
+        server.listen(port, () => console.log(`Server running on port ${port}`));
     })
     .catch((err) => {
         console.error("Database connection error:", err);
