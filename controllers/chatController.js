@@ -28,7 +28,6 @@ const getMessages = async (req, res) => {
         hasMore: hasMore,  // Whether there are more messages to load
       });
     } catch (error) {
-      console.error(error); // Log any error
       res.status(500).json({ error: 'Failed to fetch messages' });
     }
 };
