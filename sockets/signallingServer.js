@@ -50,6 +50,15 @@ module.exports = (io) => {
       }
     });
 
+    socket.on("reject-call", ({ callerId, recipientId }) => {
+      const callerSocketId = users.get(callerId);
+      if (callerSocketId) {
+        signalingNamespace
+          .to(callerSocketId)
+          .emit("call-rejected", { recipientId });
+      }
+    });
+
     socket.on("ice-candidate", ({ candidate, recipientId }) => {
       const recipientSocketId = users.get(recipientId);
       if (recipientSocketId) {
