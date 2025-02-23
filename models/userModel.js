@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         photoUrl: {
             type: DataTypes.TEXT,
+            defaultValue: "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg",
         },
         publicKey: {
             type: DataTypes.TEXT,

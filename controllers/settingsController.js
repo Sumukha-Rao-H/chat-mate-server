@@ -1,4 +1,5 @@
 const { UserSettings } = require("../db"); // Adjust the path as needed
+const { User } = require("../db");
 
 const getUserSettings = async (req, res) => {
   const { uid } = req.query;
@@ -49,7 +50,15 @@ const updateUserSettings = async (req, res) => {
       });
     } else {
       // Update only provided fields
-      if (profileImageUrl !== undefined) settings.profileImageUrl = profileImageUrl;
+      if (profileImageUrl !== undefined) {
+        settings.profileImageUrl = profileImageUrl;
+
+        // Update the User table when profileImageUrl changes
+        await User.update(
+          { photoUrl: profileImageUrl },
+          { where: { uid } }
+        );
+      }
       if (notificationsEnabled !== undefined) settings.notificationsEnabled = notificationsEnabled;
       if (profileVisibility !== undefined) settings.profileVisibility = profileVisibility;
 
