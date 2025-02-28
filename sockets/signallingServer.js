@@ -1,94 +1,63 @@
 module.exports = (io) => {
   const signalingNamespace = io.of("/signaling");
-
-  // Map of user UIDs to socket IDs
-  const users = new Map();
+  const users = new Map(); // Map user UIDs to socket IDs
 
   signalingNamespace.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    // Register the user with their UID
     socket.on("register-user", (user) => {
-      console.log("Received registration request:", user); // Log the full object
-
-      console.log("Before registering:", Array.from(users.entries()));
-
-      if (!user || !user.uid) {
-        // Ensure user object exists
-        console.log("Invalid user registration attempt. User:", user);
-        return;
-      }
-
-      const userId = user.uid;
-      users.set(userId, socket.id);
-
-      console.log(`User registered: ${userId} -> ${socket.id}`);
-      console.log("After registering:", Array.from(users.entries()));
+      if (!user || !user.uid) return;
+      users.set(user.uid, socket.id);
+      console.log(`User registered: ${user.uid} -> ${socket.id}`);
     });
 
-    socket.on("call-user", ({ callerId, callerName, recipientId, isVideoCall, sdp }) => {
-      console.log(`Attempting to call user: ${recipientId}`);
-      console.log("Currently registered users:", Array.from(users.entries()));
-
+    socket.on("call-user", ({ callerId, recipientId, isVideoCall, signal }) => {
       const recipientSocketId = users.get(recipientId);
       if (recipientSocketId) {
-        console.log(`Calling ${recipientId} at ${recipientSocketId}`);
-        signalingNamespace
-          .to(recipientSocketId)
-          .emit("incoming-call", { callerId, callerName, isVideoCall, sdp });
-      } else {
-        console.log(`Recipient ${recipientId} is not connected.`);
+        signalingNamespace.to(recipientSocketId).emit("incoming-call", {
+          callerId,
+          isVideoCall,
+          signal,
+        });
       }
     });
 
-    socket.on("accept-call", ({ callerId, recipientId, sdp }) => {
+    socket.on("signal", ({ recipientId, signalData, senderId }) => {
+      const recipientSocketId = users.get(recipientId);
+      if (recipientSocketId) {
+        signalingNamespace.to(recipientSocketId).emit("signal", { senderId, signalData });
+      }
+    });
+
+    socket.on("accept-call", ({ callerId, recipientId,signal }) => {
       const callerSocketId = users.get(callerId);
       if (callerSocketId) {
-        signalingNamespace
-          .to(callerSocketId)
-          .emit("call-accepted", { recipientId, sdp });
+        signalingNamespace.to(callerSocketId).emit("call-accepted", { recipientId, signal });
       }
     });
 
-    socket.on("reject-call", ({ callerId, recipientId }) => {
+    socket.on("reject-call", ({ callerId }) => {
       const callerSocketId = users.get(callerId);
       if (callerSocketId) {
-        signalingNamespace
-          .to(callerSocketId)
-          .emit("call-rejected", { recipientId });
+        signalingNamespace.to(callerSocketId).emit("call-rejected");
       }
     });
 
-    socket.on("ice-candidate", ({ candidate, recipientId }) => {
+    socket.on("end-call", ({ callerId, recipientId }) => {
+      const callerSocketId = users.get(callerId);
       const recipientSocketId = users.get(recipientId);
-      if (recipientSocketId) {
-        signalingNamespace
-          .to(recipientSocketId)
-          .emit("ice-candidate", { candidate });
-      }
-    });
-
-    socket.on("sdp", ({ sdp, recipientId }) => {
-      const recipientSocketId = users.get(recipientId);
-      if (recipientSocketId) {
-        signalingNamespace.to(recipientSocketId).emit("sdp", { sdp });
-      }
+      signalingNamespace.to(callerSocketId).emit("call-ended");
+      signalingNamespace.to(recipientSocketId).emit("call-ended");
     });
 
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.id}`);
       for (const [userId, socketId] of users.entries()) {
         if (socketId === socket.id) {
           users.delete(userId);
-          console.log(`Removed user ${userId} from active connections.`);
           break;
         }
       }
-      console.log(
-        "Currently connected users after disconnect:",
-        Array.from(users.entries())
-      );
+      console.log(`User disconnected: ${socket.id}`);
     });
   });
-  console.log("Currently connected users:", Array.from(users.entries()));
 };
