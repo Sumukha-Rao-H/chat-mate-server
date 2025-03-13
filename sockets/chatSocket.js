@@ -28,9 +28,9 @@ module.exports = (io) => {
         });
 
         // Handle sending messages
-        socket.on("sendMessage", async ({ senderId, receiverId, messageS, messageR }) => {
+        socket.on("sendMessage", async ({ senderId, receiverId, messageS, messageR, mediaUrl, mediaType }) => {
             const roomId = [senderId, receiverId].sort().join("_");
-
+            console.log("sendMessage hit");
             // Save the message to the database
             try {
                 const newMessage = {
@@ -38,11 +38,20 @@ module.exports = (io) => {
                     receiverId,
                     messageS,
                     messageR,
+                    mediaUrl,
+                    mediaType,
                 };
                 await saveMessage(newMessage);
 
+                const outgoingMessage = {
+                    senderId,
+                    messageR: messageR || null, // encrypted text, if any
+                    mediaUrl: mediaUrl || null, // media URL, if any
+                    mediaType: mediaType || null, // media type, if any
+                  };
+
                 // Emit the message to all users in the room
-                io.to(roomId).emit("receiveMessage", { senderId, messageR });
+                io.to(roomId).emit("receiveMessage", outgoingMessage);
                 //console.log(`Message sent in room ${roomId}: ${encryptedMessage}`);
             } catch (error) {
                 console.error("Failed to save message:", error);
