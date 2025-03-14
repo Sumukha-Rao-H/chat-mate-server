@@ -33,7 +33,7 @@ const getMessages = async (req, res) => {
 };
   
 const saveMessage = async (data) => {
-  console.log('Saving message:', data);
+  // console.log('Saving message:', data);
   try {
     await Message.create(data);
   } catch (error) {

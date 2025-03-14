@@ -30,7 +30,6 @@ module.exports = (io) => {
         // Handle sending messages
         socket.on("sendMessage", async ({ senderId, receiverId, messageS, messageR, mediaUrl, mediaType }) => {
             const roomId = [senderId, receiverId].sort().join("_");
-            console.log("sendMessage hit");
             // Save the message to the database
             try {
                 const newMessage = {
