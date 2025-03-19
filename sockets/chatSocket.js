@@ -28,7 +28,7 @@ module.exports = (io) => {
         });
 
         // Handle sending messages
-        socket.on("sendMessage", async ({ senderId, receiverId, messageS, messageR, mediaUrl, mediaType }) => {
+        socket.on("sendMessage", async ({ senderId, receiverId, messageS, messageR, mediaUrl, mediaType, encryptedAESKeyS, encryptedAESKeyR, iv, originalFileName }) => {
             const roomId = [senderId, receiverId].sort().join("_");
             // Save the message to the database
             try {
@@ -39,6 +39,10 @@ module.exports = (io) => {
                     messageR,
                     mediaUrl,
                     mediaType,
+                    encryptedAESKeyS,
+                    encryptedAESKeyR,
+                    iv,
+                    originalFileName,
                 };
                 await saveMessage(newMessage);
 
@@ -47,6 +51,9 @@ module.exports = (io) => {
                     messageR: messageR || null, // encrypted text, if any
                     mediaUrl: mediaUrl || null, // media URL, if any
                     mediaType: mediaType || null, // media type, if any
+                    iv: iv || null, // initialization vector, if any
+                    originalFileName: originalFileName || null, // original file name, if any
+                    encryptedAESKeyR: encryptedAESKeyR || null, // encrypted AES key, if any
                   };
 
                 // Emit the message to all users in the room
