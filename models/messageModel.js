@@ -54,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true, // AES key encrypted with receiver's public key
       },
 
+      rawAESKey: {
+        type: DataTypes.STRING,
+        allowNull: true, // AES key used to encrypt media (base64 or hex encoded)
+      },
+
       iv: {
         type: DataTypes.STRING,
         allowNull: true, // Initialization vector used in AES encryption (base64 or hex encoded)
